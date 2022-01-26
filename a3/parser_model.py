@@ -156,7 +156,12 @@ class ParserModel(nn.Module):
         ### Please see the following docs for support:
         ###     Matrix product: https://pytorch.org/docs/stable/torch.html#torch.matmul
         ###     ReLU: https://pytorch.org/docs/stable/nn.html?highlight=relu#torch.nn.functional.relu
-
+        X = self.embedding_lookup(w)
+        print("Batch size:", w.shape[0])
+        b_one = torch.index_select(self.embed_to_hidden_bias, 0, torch.arange(batch_size))
+        b_two = torch.index_select(self.hidden_to_logits_bias, 0, torch.arange(batch_size))
+        h = self.dropout(torch.nn.ReLU( X @ self.embed_to_hidden_weight + b_one ))
+        logits = h @ self.hidden_to_logits_weight + b_two
 
         ### END YOUR CODE
         return logits
