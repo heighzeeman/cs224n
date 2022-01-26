@@ -121,8 +121,7 @@ class ParserModel(nn.Module):
         ###     View: https://pytorch.org/docs/stable/tensors.html#torch.Tensor.view
         ###     Flatten: https://pytorch.org/docs/stable/generated/torch.flatten.html
 
-        indices = torch.tensor(w.flatten())
-        x = torch.index_select(self.embeddings, 0, indices).view(w.shape[0], self.n_features * self.embed_size)
+        x = torch.index_select(self.embeddings, 0, torch.tensor(w.flatten())).view(w.shape[0], self.n_features * self.embed_size)
         ### END YOUR CODE
         return x
 
