@@ -89,6 +89,7 @@ class ParserModel(nn.Module):
         # b2 batchsize, numclasses
 
         self.dropout = nn.Dropout(dropout_prob)
+        self.ReLU = nn.
 
         ### END YOUR CODE
 
@@ -161,7 +162,7 @@ class ParserModel(nn.Module):
         print("Batch size:", batch_size)
         b_one = torch.index_select(self.embed_to_hidden_bias, 0, torch.arange(batch_size))
         b_two = torch.index_select(self.hidden_to_logits_bias, 0, torch.arange(batch_size))
-        h = self.dropout(torch.nn.ReLU( X @ self.embed_to_hidden_weight + b_one ))
+        h = self.dropout(F.ReLU( X @ self.embed_to_hidden_weight + b_one ))
         logits = h @ self.hidden_to_logits_weight + b_two
 
         ### END YOUR CODE
