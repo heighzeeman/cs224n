@@ -73,7 +73,7 @@ class ParserModel(nn.Module):
         ### 
         ### See the PDF for hints.
         
-        self.embed_to_hidden_weight = nn.Parameter(torch.empty(self.hidden_size, self.n_features * self.embed_size)) #hiddensize, m * d
+        self.embed_to_hidden_weight = nn.Parameter(torch.empty(self.n_features * self.embed_size, self.hidden_size)) #hiddensize, m * d
         nn.init.xavier_uniform_(self.embed_to_hidden_weight)
         
         self.embed_to_hidden_bias = nn.Parameter(torch.empty(self.embed_size, self.hidden_size))
