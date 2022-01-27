@@ -76,7 +76,7 @@ class ParserModel(nn.Module):
         self.embed_to_hidden_weight = nn.Parameter(torch.empty(self.n_features * self.embed_size, self.hidden_size)) #hiddensize, m * d
         nn.init.xavier_uniform_(self.embed_to_hidden_weight)
         
-        self.embed_to_hidden_bias = nn.Parameter(torch.empty(self.embed_size, self.hidden_size))
+        self.embed_to_hidden_bias = nn.Parameter(torch.empty(embeddings.shape[0], self.hidden_size))
         nn.init.uniform_(self.embed_to_hidden_bias)
         #b1 batchsize, hiddensize
         
@@ -84,7 +84,7 @@ class ParserModel(nn.Module):
         nn.init.xavier_uniform_(self.hidden_to_logits_weight)
         # other weight = hiddensize, numclasses
         
-        self.hidden_to_logits_bias = nn.Parameter(torch.empty(self.embed_size, self.n_classes))
+        self.hidden_to_logits_bias = nn.Parameter(torch.empty(embeddings.shape[0], self.n_classes))
         nn.init.uniform_(self.hidden_to_logits_bias)
         # b2 batchsize, numclasses
 
