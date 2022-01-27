@@ -121,7 +121,7 @@ def minibatch_parse(sentences, model, batch_size):
     ###             is being accessed by `partial_parses` and may cause your code to crash.
     
     partial_parses = [ PartialParse(sent) for sent in sentences ]
-    unfinished_parses = partial_parses.copy()
+    unfinished_parses = partial_parses[:]
     
     while len(unfinished_parses) > 0:
         batch = unfinished_parses[:batch_size]
@@ -132,7 +132,7 @@ def minibatch_parse(sentences, model, batch_size):
             batch[i].parse_step(transitions[i])
             if len(batch[i].stack) == 1 and len(batch[i].buffer) == 0:
                 dependencies.append(batch[i].dependencies)
-                unfinished_parses.remove(batch[i])
+                unfinished_parses.pop(j)
             else:
                 j += 1
         
