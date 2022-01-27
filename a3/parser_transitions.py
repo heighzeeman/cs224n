@@ -35,7 +35,7 @@ class PartialParse(object):
         ###       reference the sentence object.  That is, remember to NOT modify the sentence object. 
         
         self.stack = [ "ROOT" ]
-        self.buffer = sentence.copy()
+        self.buffer = deepcopy(sentence)
         self.dependencies = []
 
         ### END YOUR CODE
