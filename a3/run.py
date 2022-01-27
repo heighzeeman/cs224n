@@ -108,7 +108,7 @@ def train_for_epoch(parser, train_data, dev_data, optimizer, loss_func, batch_si
             ###     Optimizer Step: https://pytorch.org/docs/stable/optim.html#optimizer-step
 
             logits = parser.model.forward(train_x)
-            loss = loss_func(train_y, logits)
+            loss = loss_func(logits, train_y)
             loss.backward()
             optimizer.step()
 
