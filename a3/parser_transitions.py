@@ -127,14 +127,18 @@ def minibatch_parse(sentences, model, batch_size):
         batch = unfinished_parses[:batch_size]
         transitions = model.predict(batch)
         
-        j = 0
+        #j = 0
+        to_delete = []
         for i in range(len(transitions)):
             batch[i].parse_step(transitions[i])
             if len(batch[i].stack) == 1 and len(batch[i].buffer) == 0:
                 dependencies.append(batch[i].dependencies)
-                unfinished_parses.pop(j)
-            else:
-                j += 1
+                to_delete.append(i)
+                #unfinished_parses.pop(j)
+            #else:
+            #    j += 1
+        if len(to_delete) > 0:
+            unfinished_parses = [unfinished_parses[i] for i in range(len(unfinished_parses)) if i not in to_delete]
         
     ### END YOUR CODE
 
