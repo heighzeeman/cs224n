@@ -121,7 +121,7 @@ def minibatch_parse(sentences, model, batch_size):
     ###             is being accessed by `partial_parses` and may cause your code to crash.
     
     partial_parses = [ PartialParse(sent) for sent in sentences ]
-    unfinished_parses = partial_parses[:]
+    unfinished_parses = deepcopy(partial_parses)
     
     while len(unfinished_parses) > 0:
         transitions = model.predict(unfinished_parses[:batch_size])
