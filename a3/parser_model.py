@@ -89,7 +89,6 @@ class ParserModel(nn.Module):
         # b2 batchsize, numclasses
 
         self.dropout = nn.Dropout(dropout_prob)
-        self.ReLU = nn.
 
         ### END YOUR CODE
 
