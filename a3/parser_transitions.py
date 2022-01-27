@@ -35,7 +35,7 @@ class PartialParse(object):
         ###       reference the sentence object.  That is, remember to NOT modify the sentence object. 
         
         self.stack = [ "ROOT" ]
-        self.buffer = deepcopy(sentence)
+        self.buffer = sentence.copy()
         self.dependencies = []
 
         ### END YOUR CODE
@@ -121,7 +121,7 @@ def minibatch_parse(sentences, model, batch_size):
     ###             is being accessed by `partial_parses` and may cause your code to crash.
     
     partial_parses = [ PartialParse(sent) for sent in sentences ]
-    unfinished_parses = deepcopy(partial_parses)
+    unfinished_parses = partial_parses.copy()
     
     while len(unfinished_parses) > 0:
         transitions = model.predict(unfinished_parses[:batch_size])
@@ -130,11 +130,12 @@ def minibatch_parse(sentences, model, batch_size):
         for trans in transitions:
             unfinished_parses[j].parse_step(trans)
             if len(unfinished_parses[j].stack) == 1 and len(unfinished_parses[j].buffer) == 0:
-                dependencies.append(unfinished_parses[j].dependencies)
+                #dependencies.append(unfinished_parses[j].dependencies)
                 unfinished_parses.pop(j)
             else:
                 j += 1
-        
+    
+    dependencies = [p_parse.dependencies for p_parse in partial_parses]
     ### END YOUR CODE
 
     return dependencies
