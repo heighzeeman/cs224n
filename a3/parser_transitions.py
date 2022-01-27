@@ -132,7 +132,7 @@ def minibatch_parse(sentences, model, batch_size):
             batch[i].parse_step(transitions[i])
             if len(batch[i].stack) == 1 and len(batch[i].buffer) == 0:
                 dependencies.append(batch[i].dependencies)
-                unfinished_parses.remove(j)
+                unfinished_parses.remove(batch[i])
             else:
                 j += 1
         
