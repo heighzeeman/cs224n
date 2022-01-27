@@ -158,10 +158,14 @@ class ParserModel(nn.Module):
         ###     ReLU: https://pytorch.org/docs/stable/nn.html?highlight=relu#torch.nn.functional.relu
         X = self.embedding_lookup(w)
         batch_size = w.shape[0]
-        b_one = torch.index_select(self.embed_to_hidden_bias, 0, torch.arange(batch_size))
-        b_two = torch.index_select(self.hidden_to_logits_bias, 0, torch.arange(batch_size))
-        h = self.dropout(F.relu( X @ self.embed_to_hidden_weight + b_one ))
-        logits = h @ self.hidden_to_logits_weight + b_two
+        if self.embed_to_hidden_bias.shape[0] != batch_size or self.hidden_to_logits_bias.shape[0] != batch_size:
+            self.embed_to_hidden_bias = nn.Parameter(torch.empty(batch_size, self.hidden_size))
+            nn.init.uniform_(self.embed_to_hidden_bias)
+            self.hidden_to_logits_bias = nn.Parameter(torch.empty(batch_size, self.n_classes))
+            nn.init.uniform_(self.hidden_to_logits_bias)
+        
+        h = self.dropout(F.relu( X @ self.embed_to_hidden_weight + self.embed_to_hidden_bias ))
+        logits = h @ self.hidden_to_logits_weight + self.hidden_to_logits_bias
 
         ### END YOUR CODE
         return logits
