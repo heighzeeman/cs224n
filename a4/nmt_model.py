@@ -77,7 +77,7 @@ class NMT(nn.Module):
         ###     Dropout Layer:
         ###         https://pytorch.org/docs/stable/nn.html#torch.nn.Dropout
         self.encoder = nn.LSTM(embed_size, hidden_size, bidirectional=True)
-        self.decoder = nn.LSTMCell(embed_size, hidden_size)
+        self.decoder = nn.LSTMCell(embed_size + hidden_size, hidden_size)
         self.h_projection = nn.Linear(2*hidden_size, hidden_size, bias=False)
         self.c_projection = nn.Linear(2*hidden_size, hidden_size, bias=False)
         self.att_projection = nn.Linear(2*hidden_size, hidden_size, bias=False)
@@ -253,11 +253,11 @@ class NMT(nn.Module):
         ###     Tensor Stacking:
         ###         https://pytorch.org/docs/stable/torch.html#torch.stack
         
-        print("enchid shape:", enc_hiddens.shape)
+        #print("enchid shape:", enc_hiddens.shape)
         enc_hiddens_proj = self.att_projection(enc_hiddens)
-        print("enc hid proj shape:", enc_hiddens_proj.shape)
+        #print("enc hid proj shape:", enc_hiddens_proj.shape)
         Y = self.model_embeddings.target(target_padded)
-        print("Y shape:", Y.shape)
+        #print("Y shape:", Y.shape)
         Ysplit = torch.split(Y, 1)
         for t in Ysplit:
             Y_t = torch.squeeze(t, dim=0)
@@ -322,9 +322,9 @@ class NMT(nn.Module):
         ###         https://pytorch.org/docs/stable/torch.html#torch.unsqueeze
         ###     Tensor Squeeze:
         ###         https://pytorch.org/docs/stable/torch.html#torch.squeeze
-
-
-
+        dec_state = self.decoder(Ybar_t, dec_state)
+        dec_hidden, dec_cell = dec_state
+        e_t = torch.squeeze(torch.bmm(enc_hiddens_proj, torch.unsqueeze(dec_hidden, 2)), dim=2)
 
         ### END YOUR CODE
 
@@ -360,10 +360,11 @@ class NMT(nn.Module):
         ###     Tanh:
         ###         https://pytorch.org/docs/stable/torch.html#torch.tanh
 
-
-
-
-
+        alpha_t = F.softmax(e_t)
+        a_t = torch.squeeze(torch.bmm(torch.permute(enc_hiddens, (0, 2, 1)), torch.unsqueeze(alpha_t, 2)), dim=2)
+        U_t = torch.cat((a_t, dec_hidden), dim=1)
+        V_t = self.combined_output_projection(U_t)
+        O_t = self.dropout(torch.tanh(V_t))
         ### END YOUR CODE
 
         combined_output = O_t
