@@ -82,7 +82,7 @@ class NMT(nn.Module):
         self.c_projection = nn.Linear(2*hidden_size, hidden_size, bias=False)
         self.att_projection = nn.Linear(2*hidden_size, hidden_size, bias=False)
         self.combined_output_projection = nn.Linear(3*hidden_size, hidden_size, bias=False)
-        self.target_vocab_projection = nn.Linear(len(vocab.tgt), hidden_size, bias=False)
+        self.target_vocab_projection = nn.Linear(hidden_size, len(vocab.tgt), bias=False)
         self.dropout = nn.Dropout(dropout_rate)
 
         ### END YOUR CODE
@@ -205,7 +205,7 @@ class NMT(nn.Module):
                                         tgt_len = maximum target sentence length, b = batch_size,  h = hidden size
         """
         # Chop off the <END> token for max length sentences.
-        print("prechop targ pad shape:", target_padded.shape)
+        #print("prechop targ pad shape:", target_padded.shape)
         target_padded = target_padded[:-1]
 
         # Initialize the decoder state (hidden and cell)
@@ -254,12 +254,12 @@ class NMT(nn.Module):
         ###     Tensor Stacking:
         ###         https://pytorch.org/docs/stable/torch.html#torch.stack
         
-        print("enchid shape:", enc_hiddens.shape)
+        #print("enchid shape:", enc_hiddens.shape)
         enc_hiddens_proj = self.att_projection(enc_hiddens)
-        print("enc hid proj shape:", enc_hiddens_proj.shape)
-        print("targ padded shape:", target_padded.shape)
+        #print("enc hid proj shape:", enc_hiddens_proj.shape)
+        #print("targ padded shape:", target_padded.shape)
         Y = self.model_embeddings.target(target_padded)
-        print("Y shape:", Y.shape)
+        #print("Y shape:", Y.shape)
         Ysplit = torch.split(Y, 1)
         for t in Ysplit:
             Y_t = torch.squeeze(t, dim=0)
@@ -268,7 +268,7 @@ class NMT(nn.Module):
             combined_outputs.append(o_t)
             o_prev = o_t
         combined_outputs = torch.stack(combined_outputs)
-        print("c out shape:", combined_outputs.shape)
+        #print("c out shape:", combined_outputs.shape)
         ### END YOUR CODE
         
         return combined_outputs
