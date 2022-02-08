@@ -256,7 +256,7 @@ class NMT(nn.Module):
         print("enchid shape:", enc_hiddens.shape)
         enc_hiddens_proj = self.att_projection(enc_hiddens)
         print("enc hid proj shape:", enc_hiddens_proj.shape)
-        Y = self.model_embeddings.tgt(target_padded)
+        Y = self.model_embeddings.target(target_padded)
         print("Y shape:", Y.shape)
         Ysplit = torch.split(Y, 1)
         for t in Ysplit:
