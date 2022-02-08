@@ -205,6 +205,7 @@ class NMT(nn.Module):
                                         tgt_len = maximum target sentence length, b = batch_size,  h = hidden size
         """
         # Chop off the <END> token for max length sentences.
+        print("prechop targ pad shape:", target_padded.shape)
         target_padded = target_padded[:-1]
 
         # Initialize the decoder state (hidden and cell)
@@ -256,6 +257,7 @@ class NMT(nn.Module):
         print("enchid shape:", enc_hiddens.shape)
         enc_hiddens_proj = self.att_projection(enc_hiddens)
         print("enc hid proj shape:", enc_hiddens_proj.shape)
+        print("targ padded shape:", target_padded.shape)
         Y = self.model_embeddings.target(target_padded)
         print("Y shape:", Y.shape)
         Ysplit = torch.split(Y, 1)
