@@ -253,11 +253,11 @@ class NMT(nn.Module):
         ###     Tensor Stacking:
         ###         https://pytorch.org/docs/stable/torch.html#torch.stack
         
-        #print("enchid shape:", enc_hiddens.shape)
+        print("enchid shape:", enc_hiddens.shape)
         enc_hiddens_proj = self.att_projection(enc_hiddens)
-        #print("enc hid proj shape:", enc_hiddens_proj.shape)
+        print("enc hid proj shape:", enc_hiddens_proj.shape)
         Y = self.model_embeddings.target(target_padded)
-        #print("Y shape:", Y.shape)
+        print("Y shape:", Y.shape)
         Ysplit = torch.split(Y, 1)
         for t in Ysplit:
             Y_t = torch.squeeze(t, dim=0)
@@ -266,6 +266,7 @@ class NMT(nn.Module):
             combined_outputs.append(o_t)
             o_prev = o_t
         combined_outputs = torch.stack(combined_outputs)
+        print("c out shape:", combined_outputs.shape)
         ### END YOUR CODE
         
         return combined_outputs
