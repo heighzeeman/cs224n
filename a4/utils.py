@@ -31,12 +31,9 @@ def pad_sents(sents, pad_token):
         than the max length sentence are padded out with the pad_token, such that
         each sentences in the batch now has equal length.
     """
-    sents_padded = []
-
     ### YOUR CODE HERE (~6 Lines)
-
-
-
+    max_length = len(max(sents, key=lambda sent: len(sent)))
+    sents_padded = [ sent + [pad_token] * (len(sent) - max_length) for sent in sents ]
     ### END YOUR CODE
 
     return sents_padded
