@@ -180,9 +180,10 @@ class NMT(nn.Module):
         enc_hiddens, (last_hidden, last_cell) = self.encoder(pack_padded_sequence(X, source_lengths))
         enc_hiddens, unpacked_lengths = pad_packed_sequence(enc_hiddens, batch_first=True)
         print("Enchiddens shape:", enc_hiddens.shape, " last_hidden shape:", last_hidden.shape, " last_cell shape:", last_cell.shape)
-        print("cat last hidden shape:", torch.cat((last_hidden[0], last_hidden[1])).shape)
-        print("cat last cell shape:", torch.cat((last_cell[0], last_cell[1])))
-        dec_init_state = (self.h_projection(torch.cat((last_hidden[0], last_hidden[1]))), self.c_projection(torch.cat((last_cell[0], last_cell[1]))))
+        print("cat last hidden shape:", torch.cat((last_hidden[0], last_hidden[1]), dim=1).shape)
+        print("cat last cell shape:", torch.cat((last_cell[0], last_cell[1]), dim=1).shape)
+        dec_init_state = (self.h_projection(torch.cat((last_hidden[0], last_hidden[1]), dim=1)),
+                          self.c_projection(torch.cat((last_cell[0], last_cell[1]), dim=1)))
         ### END YOUR CODE
 
         return enc_hiddens, dec_init_state
