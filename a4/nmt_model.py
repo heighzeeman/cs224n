@@ -174,14 +174,14 @@ class NMT(nn.Module):
         ###     Tensor Permute:
         ###         https://pytorch.org/docs/stable/tensors.html#torch.Tensor.permute
         
-        print("Source pad shape:", source_padded.shape)
+        #print("Source pad shape:", source_padded.shape)
         X = self.model_embeddings.source(source_padded)
-        print("X shape:", X.shape)
+        #print("X shape:", X.shape)
         enc_hiddens, (last_hidden, last_cell) = self.encoder(pack_padded_sequence(X, source_lengths))
         enc_hiddens, unpacked_lengths = pad_packed_sequence(enc_hiddens, batch_first=True)
-        print("Enchiddens shape:", enc_hiddens.shape, " last_hidden shape:", last_hidden.shape, " last_cell shape:", last_cell.shape)
-        print("cat last hidden shape:", torch.cat((last_hidden[0], last_hidden[1]), dim=1).shape)
-        print("cat last cell shape:", torch.cat((last_cell[0], last_cell[1]), dim=1).shape)
+        #print("Enchiddens shape:", enc_hiddens.shape, " last_hidden shape:", last_hidden.shape, " last_cell shape:", last_cell.shape)
+        #print("cat last hidden shape:", torch.cat((last_hidden[0], last_hidden[1]), dim=1).shape)
+        #print("cat last cell shape:", torch.cat((last_cell[0], last_cell[1]), dim=1).shape)
         dec_init_state = (self.h_projection(torch.cat((last_hidden[0], last_hidden[1]), dim=1)),
                           self.c_projection(torch.cat((last_cell[0], last_cell[1]), dim=1)))
         ### END YOUR CODE
@@ -252,14 +252,22 @@ class NMT(nn.Module):
         ###         https://pytorch.org/docs/stable/torch.html#torch.cat
         ###     Tensor Stacking:
         ###         https://pytorch.org/docs/stable/torch.html#torch.stack
-
-
-
-
-
-
+        
+        print("enchid shape:", enc_hiddens.shape)
+        enc_hiddens_proj = self.att_projection(enc_hiddens)
+        print("enc hid proj shape:", enc_hiddens_proj.shape)
+        Y = self.model_embeddings.tgt(target_padded)
+        print("Y shape:", Y.shape)
+        Ysplit = torch.split(Y, 1)
+        for t in Ysplit:
+            Y_t = torch.squeeze(t, dim=0)
+            Ybar_t = torch.cat((Y_t, o_prev), dim=1)
+            dec_state, (o_t, e_t) = self.step(Ybar_t, dec_state, enc_hiddens, enc_hiddens_proj, enc_masks)
+            combined_outputs.append(o_t)
+            o_prev = o_t
+        combined_outputs = torch.stack(combined_outputs)
         ### END YOUR CODE
-
+        
         return combined_outputs
 
 
