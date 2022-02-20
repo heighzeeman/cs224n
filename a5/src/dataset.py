@@ -171,7 +171,7 @@ class CharCorruptionDataset(Dataset):
         # TODO [part e]: see spec above
         doc = self.data[idx]
         length = random.randint(4, int(self.block_size*7/8))
-        start_idx = random.randint(0, len(doc) - length)
+        start_idx = random.randint(0, len(doc) - length + 1)
         doc = doc[start_idx : start_idx + length]
         assert(len(doc) == length)
         left_span = length // 4 - 1
