@@ -176,7 +176,7 @@ class CharCorruptionDataset(Dataset):
         #assert(len(doc) == length)
         left_span = length // 4 - 1
         right_span = length - 3 - length // 4
-        span = min(0, min(left_span, right_span))
+        span = max(0, min(left_span, right_span))
         if span == 0:
             mask_span = 0
         else:
