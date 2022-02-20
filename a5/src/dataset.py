@@ -177,7 +177,7 @@ class CharCorruptionDataset(Dataset):
             start_idx = random.randint(0, len(doc) - length)
         doc = doc[start_idx : start_idx + length]
         #assert(len(doc) == length)
-        mask_length = max(1, round(random.uniform(1, length/2 - 1)))
+        mask_length = min(len(doc), max(1, int(round(random.uniform(1, length/2 - 1)))))
         if mask_length == len(doc):
             mask_start_idx = 0
         else:
