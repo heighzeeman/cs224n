@@ -134,7 +134,7 @@ elif args.function == 'finetune':
     
     coach = trainer.Trainer(model, finetune_dataset, None, tconf)
     coach.train()
-    coach.save_checkpoint()
+    torch.save(model.state_dict(), args.writing_params_path)
     
     #raise NotImplementedError
 elif args.function == 'evaluate':
