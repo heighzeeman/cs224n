@@ -119,7 +119,7 @@ elif args.function == 'finetune':
     #         num_workers=4
     
     finetune_text = open(args.finetune_corpus_path).read()
-    finetune_dataset = dataset.CharCorruptionDataset(finetune_text, block_size)
+    finetune_dataset = dataset.NameDataset(finetune_text, block_size)
     
     if args.reading_params_path is not None:
         model.load_state_dict(torch.load(args.reading_params_path))
