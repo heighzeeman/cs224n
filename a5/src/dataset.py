@@ -171,19 +171,21 @@ class CharCorruptionDataset(Dataset):
         # TODO [part e]: see spec above
         doc = self.data[idx]
         length = min(len(doc), random.randint(4, int(self.block_size*7/8)))
-        start_idx = random.randint(0, len(doc) - length + 1)
+        if length == len(doc):
+            start_idx = 0
+        else:
+            start_idx = random.randint(0, len(doc) - length)
         doc = doc[start_idx : start_idx + length]
         #assert(len(doc) == length)
-        left_span = length // 4 - 1
-        right_span = length - 3 - length // 4
-        span = max(0, min(left_span, right_span))
-        if span == 0:
-            mask_span = 0
+        mask_length = max(1, round(random.uniform(1, length/2 - 1)))
+        if mask_length == len(doc):
+            mask_start_idx = 0
         else:
-            mask_span = random.randint(0, span)
-        prefix = doc[:length//4 - span]
-        mask = doc[length//4 - span : length//4 + span + 1]
-        suffix = doc[length//4 + span + 1:]
+            mask_start_idx = random.randint(0, len(doc) - mask_length)
+        
+        prefix = doc[:mask_start_idx]
+        mask = doc[mask_start_idx : mask_start_idx + mask_length]
+        suffix = doc[mask_start_idx + mask_length:]
         
         masked_string = prefix + self.MASK_CHAR + suffix + self.MASK_CHAR + mask
         masked_string += self.PAD_CHAR * (self.block_size - len(masked_string))
