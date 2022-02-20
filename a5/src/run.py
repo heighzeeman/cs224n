@@ -56,8 +56,12 @@ Don't change above here; write your code below
 
 if args.variant == 'vanilla':
     pass # TODO [part c]: Make some model here
+    model = model.GPT(mconf)
+    
 elif args.variant == 'synthesizer':
     pass # TODO [part g]: Make some other model here
+    mconf.synthesizer = True
+    model = model.GPT(mconf)
 
 # From here on, your code should be identical independent of which
 # variant (vanilla or synthesizer) has been chosen.
@@ -112,7 +116,26 @@ elif args.function == 'finetune':
     #         warmup_tokens=512*20
     #         final_tokens=200*len(pretrain_dataset)*block_size
     #         num_workers=4
-    raise NotImplementedError
+    
+    finetune_text = open(args.finetune_corpus_path).read()
+    finetune_dataset = dataset.CharCorruptionDataset(finetune_text, block_size)
+    
+    if args.reading_params_path is not None:
+        model.load_state_dict(torch.load(args.reading_params_path))
+        print("Loaded pretrained model...")
+        tconf = trainer.TrainerConfig(max_epochs=10, batch_size=256, learning_rate=6e-4, lr_decay=True,  \
+                                      warmup_tokens=512*20, final_tokens=200*len(pretrain_dataset)*block_size, num_workers=4, \
+                                      ckpt_path=args.writing_params_path)
+    else:
+        tconf = trainer.TrainerConfig(max_epochs=75, batch_size=256, learning_rate=6e-4, lr_decay=True,  \
+                                      warmup_tokens=512*20, final_tokens=200*len(pretrain_dataset)*block_size, num_workers=4, \
+                                      ckpt_path=args.writing_params_path)
+    
+    coach = trainer.Trainer(model, finetune_dataset, None, tconf)
+    coach.train()
+    coach.save_checkpoint()
+    
+    #raise NotImplementedError
 elif args.function == 'evaluate':
     assert args.outputs_path is not None
     assert args.reading_params_path is not None
