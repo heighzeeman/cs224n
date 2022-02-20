@@ -176,9 +176,11 @@ class CharCorruptionDataset(Dataset):
         #assert(len(doc) == length)
         left_span = length // 4 - 1
         right_span = length - 3 - length // 4
-        span = min(left_span, right_span)
-        
-        mask_span = random.randint(0, span)
+        span = min(0, min(left_span, right_span))
+        if span == 0:
+            mask_span = 0
+        else:
+            mask_span = random.randint(0, span)
         prefix = doc[:length//4 - span]
         mask = doc[length//4 - span : length//4 + span + 1]
         suffix = doc[length//4 + span + 1:]
